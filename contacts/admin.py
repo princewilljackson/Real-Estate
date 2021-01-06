@@ -1,11 +1,27 @@
 from django.contrib import admin
 
-from .models import Contact
+from .models import SaleContact, RentContact, PropertyManagement
 
-class ContactAdmin(admin.ModelAdmin):
-  list_display = ('id', 'name', 'listing', 'email', 'contact_date')
+class SaleContactAdmin(admin.ModelAdmin):
+  list_display = ('id', 'name', 'sale', 'email', 'contact_date')
   list_display_links = ('id', 'name')
-  search_fields = ('name', 'email', 'listing')
+  search_fields = ('name', 'email', 'sale')
   list_per_page = 25
 
-admin.site.register(Contact, ContactAdmin)
+admin.site.register(SaleContact, SaleContactAdmin)
+
+class RentContactAdmin(admin.ModelAdmin):
+  list_display = ('id', 'name', 'rent', 'email', 'contact_date')
+  list_display_links = ('id', 'name')
+  search_fields = ('name', 'email', 'rent')
+  list_per_page = 25
+
+admin.site.register(RentContact, RentContactAdmin)
+
+class PropertyManagementAdmin(admin.ModelAdmin):
+  list_display = ('id', 'name', 'email', 'context')
+  list_display_links = ('id', 'name')
+  search_fields = ('name', 'email')
+  list_per_page = 25
+
+admin.site.register(PropertyManagement, PropertyManagementAdmin)

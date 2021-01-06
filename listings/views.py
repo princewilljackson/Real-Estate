@@ -1,10 +1,10 @@
 from django.shortcuts import get_object_or_404, render
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from .choices import price_choices, bedroom_choices, state_choices
+from listings.choices import bedroom_choices, state_choices
 
-from .models import Sale
+from .models import Sale, Rent
 
-def index(request):
+def sales(request):
   sales = Sale.objects.order_by('-list_date').filter(is_published=True)
 
   paginator = Paginator(sales, 6)
@@ -15,16 +15,38 @@ def index(request):
     'sales': paged_sales
   }
 
-  return render(request, 'listings/listings.html', context)
+  return render(request, 'listings/sales.html', context)
+
+def rents(request):
+  rents = Rent.objects.order_by('-list_date').filter(is_published=True)
+
+  paginator = Paginator(rents, 6)
+  page = request.GET.get('page')
+  paged_rents = paginator.get_page(page)
+
+  context = {
+    'rents': paged_rents
+  }
+
+  return render(request, 'listings/rents.html', context)
 
 def sale(request, sale_id):
   sale = get_object_or_404(Sale, pk=sale_id)
-
+  
   context = {
     'sale': sale
   }
 
-  return render(request, 'listings/listing.html', context)
+  return render(request, 'listings/sale.html', context)
+  
+def rent(request, rent_id):
+  rent = get_object_or_404(Rent, pk=rent_id)
+
+  context = {
+    'rent': rent
+  }
+
+  return render(request, 'listings/rent.html', context)
 
 def search(request):
   queryset_list = Sale.objects.order_by('-list_date')
@@ -45,24 +67,17 @@ def search(request):
   if 'state' in request.GET:
     state = request.GET['state']
     if state:
-      queryset_list = queryset_list.filter(state__lte=state)
+      queryset_list = queryset_list.filter(state__iexact=state)
 
   # Bedrooms
   if 'bedrooms' in request.GET:
     bedrooms = request.GET['bedrooms']
     if bedrooms:
-      queryset_list = queryset_list.filter(bedrooms__lte=bedrooms)
-
-  # Price
-  # if 'price' in request.GET:
-  #   price = request.GET['price']
-  #   if price:
-  #     queryset_list = queryset_list.filter(price__lte=price)
+      queryset_list = queryset_list.filter(bedrooms__iexact=bedrooms)
 
   context = {
     'state_choices': state_choices,
     'bedroom_choices': bedroom_choices,
-    'price_choices': price_choices,
     'sales': queryset_list,
     'values': request.GET
   }

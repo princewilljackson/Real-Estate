@@ -11,12 +11,12 @@
       <div class="home-search p-5">
         <div class="overlay p-5">
           <h1 class="display-4 mb-4">
-            Property Searching Just Got So Easy
+            Property Search
           </h1>
-          <p class="lead">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Recusandae quas, asperiores eveniet vel nostrum magnam
-            voluptatum tempore! Consectetur, id commodi!</p>
+          <p class="lead">
+            Homeownership is a global aspiration. Enjoy your property search experience today. View all results based on your choice. Whether you are searching for a home in a town or a flat in the city, you will always have wide-ranging resources to find a home with realestateproperty.com.</p>
           <div class="search">
-            <form action="{% url 'search' %}">
+            <form action="{% url 'listings:search' %}">
               <!-- Form Row 1 -->
               <div class="form-row">
                 <div class="col-md-4 mb-3">
@@ -46,14 +46,6 @@
                   <select name="bedrooms" class="form-control">
                     <option selected="true" disabled="disabled">Bedrooms (All)</option>
                     {% for key,value in bedroom_choices.items %}
-                      <option value="{{ key }}">{{ value }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <select name="price" class="form-control" id="type">
-                    <option selected="true" disabled="disabled">Max Price (Any)</option>
-                    {% for key,value in price_choices.items %}
                       <option value="{{ key }}">{{ value }}</option>
                     {% endfor %}
                   </select>
@@ -124,7 +116,7 @@
                       <i class="fas fa-clock"></i> {{ sale.list_date | timesince }}</div>
                   </div>
                   <hr>
-                  <a href="{% url 'sale' sale.id %}" class="btn btn-primary btn-block">More Info</a>
+                  <a href="{% url 'listings:sale' sale.id %}" class="btn btn-primary btn-block">More Info</a>
                 </div>
               </div>
             </div>
@@ -134,6 +126,65 @@
             <p>No Listings Available</p>
           </div>
         {% endif %}
+
+        {% if rents %}
+          {% for rent in rents %}
+          <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card listing-preview">
+              <img class="card-img-top" src="{{ rent.photo_main.url }}"  height="300" width="50" alt="">
+              <div class="card-img-overlay d-flex flex-row">
+                <h2 class="mr-5">
+                  <span class="badge badge-secondary text-white">${{ rent.price | intcomma }}</span>
+                </h2>
+               {% if rent.occupied is True %}
+               <h2 class="ml-5 pl-2">
+                <span class="badge badge-danger text-white">Occupied</span>
+              </h2>
+              {% else %}
+                <h2 class="ml-5">
+                <span class="badge badge-info text-white">For Rent</span>
+              </h2>
+               {% endif %}
+              </div>
+              <div class="card-body">
+                <div class="listing-heading text-center">
+                  <h4 class="text-primary">{{ rent.title }}</h4>
+                  <p>
+                    <i class="fas fa-map-marker text-secondary"></i> {{ rent.city }} {{ rent.state }}, {{ rent.zipcode }}</p>
+                </div>
+                <hr>
+                <div class="row py-2 text-secondary">
+                  <div class="col-6">
+                    <i class="fas fa-th-large"></i> Sqft: {{ rent.sqft }}</div>
+                  <div class="col-6">
+                    <i class="fas fa-car"></i> Garage: {{ rent.garage }}</div>
+                </div>
+                <div class="row py-2 text-secondary">
+                  <div class="col-6">
+                    <i class="fas fa-bed"></i> Bedrooms: {{ rent.bedrooms }}</div>
+                  <div class="col-6">
+                    <i class="fas fa-bath"></i> Bathrooms: {{ rent.bathrooms }}</div>
+                </div>
+                <hr>
+                <div class="row py-2 text-secondary">
+                  <div class="col-6">
+                    <i class="fas fa-user"></i> {{ rent.realtor }}</div>
+                </div>
+                <div class="row text-secondary pb-2">
+                  <div class="col-6">
+                    <i class="fas fa-clock"></i> {{ rent.list_date | timesince }}</div>
+                </div>
+                <hr>
+                <a href="{% url 'listings:rent' rent.id %}" class="btn btn-primary btn-block">More Info</a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+        <div class="col-md-12">
+          <p>No Listings Available</p>
+        </div>
+        {% endif%}
 
       </div>
     </div>
